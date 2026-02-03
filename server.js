@@ -13,7 +13,7 @@ app.use("/api/v1/users", userRoutes)
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     connetDB();
-    console.log(`Example app listening on port ${port}`)
+    console.log(`Server running on port ${port}`)
 })
 
 

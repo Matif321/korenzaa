@@ -48,7 +48,9 @@ export const verifyEmail = (token, email) => {
 
 }
 
+
 export default verifyEmail;
+
 
 
 
