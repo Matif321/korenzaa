@@ -257,6 +257,124 @@ export const loginUser = async (req, res) => {
     }
 };
 
+// export const verify = async (req, res) => {
+//     try {
+//         const authHeader = req.headers.authorization
+//         if (!authHeader || !authHeader.startsWith("Bearer")) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "Athorization token is messing or invalid"
+//             })
+//         }
+//         const token = authHeader.split("")[1]
+
+//         let decoded
+//         try {
+//             decoded = jwt.verify(token, process.env.JWT_SECRET)
+//             if (!error.name === "TokenExpiredError") {
+//                 return res.status(400).json({
+//                     success: false,
+//                     message: "the registion token is expired"
+
+//                 })
+//             }
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "Token verifation is failed"
+//             })
+
+//         } catch (error) {
+
+//         }
+//         const user = await User.findById(decoded.id)
+
+//         if (!user) {
+//             return res.status(400).jaon({
+//                 success: false,
+//                 message: "User not found"
+//             }
+
+//             )
+
+//         }
+
+//         user.token = null,
+//             user.verified = true
+//         await user.save()
+//         return res.status(200).json({
+//             success: false,
+//             message: "Email verify successfullay"
+//         })
+
+
+
+
+//     } catch (error) {
+//         res.status(500).json({
+//             sucess: false,
+//             message: "error.message"
+//         })
+
+//     }
+// }
+
+export const verify = async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader || !authHeader.startsWith("Bearer")) {
+            return res.status(400).json({
+                success: false,
+                message: "Authorization token is missing or invalid"
+            });
+        }
+
+        const token = authHeader.split(" ")[1];
+
+        let decoded;
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (error) {
+            if (error.name === "TokenExpiredError") {
+                return res.status(400).json({
+                    success: false,
+                    message: "Registration token has expired"
+                });
+            }
+            return res.status(400).json({
+                success: false,
+                message: "Token verification failed"
+            });
+        }
+
+        const user = await User.findById(decoded.id);
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        user.token = null;
+        user.verified = true;
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Email verified successfully"
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+
+
 
 
 
