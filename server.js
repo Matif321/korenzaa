@@ -1,22 +1,22 @@
-import express from "express"
-import dotenv from "dotenv"
-import connetDB from "./database/db.js";
-import userRoutes from "./router/userRoutes.js"
+import express from "express";
+import dotenv from "dotenv";
+import dbConnection from "./database/db.js";
+import userRoutes from "./routers/userRoutes.js"
 
-dotenv.config()
-const app = express()
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.use("/api/v1/users", userRoutes)
+// Signup route
+app.use("/api/v1/users", userRoutes);
 
-const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    connetDB();
-    console.log(`Server running on port ${port}`)
-})
-
-
+    dbConnection();
+    console.log(`Server running on port ${port}`);
+});
 
 
 
