@@ -76,6 +76,7 @@ export const getAllProduct = async () => {
 export const updateProduct = async (req, res) => {
 
     try {
+        const product = req.params.id;
 
     } catch (error) {
         res.staus.json(500).json({
