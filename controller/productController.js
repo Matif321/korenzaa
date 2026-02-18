@@ -1,92 +1,229 @@
-import User from "../models/userModel.js";
+// import User from "../models/userModel.js";
 
 
-export const createproduct = async (req, res) => {
+// export const createproduct = async (req, res) => {
+//     try {
+//         const { name, category, price, description, imag } = req.body;
+//         if (!name || !category || !price || !description || !imag) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "All filled are required"
+//             })
+
+//         }
+//         const user = new User({ name, category, price, description, imag })
+//         if (user) {
+//             res.status.json({
+//                 success: false,
+//                 false: "Product not found"
+//             })
+//         }
+//         await user.save();
+
+//         res.status(201).json({
+//             success: true,
+//             message: "product created successfullay "
+
+//         })
+
+//     } catch (error) {
+//         res.status(500).json({
+//             success: false,
+//             messsage: error.messsage
+//         })
+
+//     }
+// }
+
+
+// // get all product
+
+// export const getAllProduct = async () => {
+//     try {
+//         const product = await User.find({});
+
+//         if (!product) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: "Product is not found"
+
+//             })
+
+//         }
+//         res.status(200).json({
+//             success: true,
+//             message: product.length,
+//             error: error.message
+
+
+
+//         })
+
+
+//     } catch (error) {
+//         res.status(500).json({
+//             success: false,
+//             message: error.message
+
+//         })
+
+//     }
+
+// };
+
+// //  update product
+
+// export const updateProduct = async (req, res) => {
+//     try {
+
+
+//     } catch (error) {
+//         res.status(500).json({
+//             success: false,
+//             error: error.message
+//         })
+
+//     }
+// }
+
+
+import Product from "../models/productModel.js";
+
+// ================= CREATE PRODUCT =================
+export const createProduct = async (req, res) => {
     try {
-        const { name, category, price, description, imag } = req.body;
-        if (!name || !category || !price || !description || !imag) {
+        const { name, category, price, description, image } = req.body;
+
+        if (!name || !category || !price) {
             return res.status(400).json({
                 success: false,
-                message: "All filled are required"
-            })
+                message: "Name, category and price are required"
+            });
+        }
 
-        }
-        const user = new User({ name, category, price, description, imag })
-        if (user) {
-            res.status.json({
-                success: false,
-                false: "Product not found"
-            })
-        }
-        await user.save();
+        const product = await Product.create({
+            name,
+            category,
+            price,
+            description,
+            image
+        });
 
         res.status(201).json({
             success: true,
-            message: "product created successfullay "
-
-        })
+            data: product
+        });
 
     } catch (error) {
         res.status(500).json({
             success: false,
-            messsage: error.messsage
-        })
-
+            message: error.message
+        });
     }
-}
+};
 
-
-// get all product
-
-export const getAllProduct = async () => {
+// ================= GET ALL PRODUCTS =================
+export const getAllProducts = async (req, res) => {
     try {
-        const product = await User.find({});
+        const products = await Product.find()
+            .populate("category");
+
+        res.status(200).json({
+            success: true,
+            data: products
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// ================= GET SINGLE PRODUCT =================
+export const getSingleProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const product = await Product.findById(id)
+            .populate("category");
 
         if (!product) {
             return res.status(404).json({
                 success: false,
-                message: "Product is not found"
-
-            })
-
+                message: "Product not found"
+            });
         }
+
         res.status(200).json({
             success: true,
-            message: product.length,
-            error: error.message
-
-
-
-        })
-
+            data: product
+        });
 
     } catch (error) {
         res.status(500).json({
             success: false,
             message: error.message
-
-        })
-
+        });
     }
+};
 
-}
-
-//  update product
-
+// ================= UPDATE PRODUCT =================
 export const updateProduct = async (req, res) => {
-
     try {
-        const product = req.params.id;
+        const { id } = req.params;
+
+        const product = await Product.findByIdAndUpdate(
+            id,
+            req.body,
+            { new: true }
+        );
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: product
+        });
 
     } catch (error) {
-        res.staus.json(500).json({
+        res.status(500).json({
             success: false,
             message: error.message
-
-        })
-
+        });
     }
+};
 
+// ================= DELETE PRODUCT =================
+export const deleteProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
 
+        const product = await Product.findByIdAndDelete(id);
 
-}
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Product deleted successfully"
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
