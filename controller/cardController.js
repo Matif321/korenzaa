@@ -1,30 +1,7 @@
 
 
-
-// export const getCart=async(req,res,next)=>{
-//     try {
-
-//         const card=await Cart.findOne({user:req.user.id}).papulate(
-//             'item.product',
-//             'name images price stock'
-//         );
-
-
-//         if(!cart){
-//             cart={user:req.user.id,items:[],totalPrice:0};
-
-//         } 
-//         res.status(200).json({})
-
-
-
-
-
-//     } catch (error) {
-
-//     }
-// }
 const Cart = require('../models/Cart');
+
 const Product = require('../models/Product');
 
 // @desc    Get logged-in user's cart
@@ -177,7 +154,10 @@ const removeFromCart = async (req, res, next) => {
 
         const cart = await Cart.findOne({ user: req.user._id });
         if (!cart) {
-            return res.status(404).json({ success: false, message: 'Cart not found' });
+            return res.status(404).json({
+                success: false,
+                message: 'Cart not found'
+            });
         }
 
         cart.items = cart.items.filter(
